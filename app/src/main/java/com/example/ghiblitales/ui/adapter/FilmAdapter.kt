@@ -67,7 +67,7 @@ class FilmAdapter(
         }
     }
 
-    // cuando hay un cambio, no renderizar todo de cero sino solo los items que cambiaron
+
     companion object DiffCallback : DiffUtil.ItemCallback<FilmModel>() {
         override fun areItemsTheSame(oldItem: FilmModel, newItem: FilmModel): Boolean {
             return oldItem.id == newItem.id
