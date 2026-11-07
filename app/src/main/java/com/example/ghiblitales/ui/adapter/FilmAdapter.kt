@@ -9,11 +9,20 @@ import com.example.ghiblitales.data.FilmModel
 import com.example.ghiblitales.databinding.ItemFilmBinding
 import com.squareup.picasso.Picasso
 
+/**
+ * Adapter of the RecyclerView: connects the list of films with the item_film.xml layout.
+ * The same adapter is used in the film list and in the favorites list.
+ *
+ * It receives two lambdas, so the adapter only reports clicks and doesn't decide what to do with them
+ * (the Fragment does).
+ * ListAdapter + DiffUtil: when a new list arrives, only the items that changed are redrawn.
+ */
 class FilmAdapter(
     private val onItemClick: (FilmModel) -> Unit,
     private val onFavoriteClick: (FilmModel) -> Unit
 ) : ListAdapter<FilmModel, FilmAdapter.FilmViewHolder>(DiffCallback) {
 
+    // Called only when a new row view is needed; RecyclerView then reuses those views while scrolling
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -26,11 +35,13 @@ class FilmAdapter(
         return FilmViewHolder(binding)
     }
 
+    // Called every time a row has to show the data of the film at that position
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
     }
 
+    // ViewHolder: keeps the references to the views of one row (ViewBinding) so they are not searched again
     inner class FilmViewHolder(private val binding: ItemFilmBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -39,7 +50,8 @@ class FilmAdapter(
             binding.tvScore.text = "Score: ${item.rtScore}/100"
             binding.tvInfo.text = "${item.director} · ${item.releaseDate}"
 
-            // carga de imagen con picasso (si la url viene vacía, Picasso lanzaría una excepción)
+            // Picasso downloads and shows the poster. An empty URL would make Picasso throw an exception,
+            // so we use a default image in that case
             if (item.image.isNotBlank()) {
                 Picasso.get()
                     .load(item.image)
@@ -49,6 +61,7 @@ class FilmAdapter(
                 binding.ivFilm.setImageResource(android.R.drawable.ic_menu_gallery)
             }
 
+            // The star icon depends on the favorite state of the film
             val starDrawable = if (item.isFavorite) {
                 android.R.drawable.btn_star_big_on
             } else {
@@ -60,14 +73,18 @@ class FilmAdapter(
                 onFavoriteClick(item)
             }
 
-            // tocar la tarjeta abre el detalle
+            // Touching the card opens the detail screen
             binding.root.setOnClickListener {
                 onItemClick(item)
             }
         }
     }
 
-
+    /**
+     * DiffUtil compares the old and the new list to find out what changed.
+     * areItemsTheSame: is it the same film? (same id)
+     * areContentsTheSame: is the film's data the same? (data class equality)
+     */
     companion object DiffCallback : DiffUtil.ItemCallback<FilmModel>() {
         override fun areItemsTheSame(oldItem: FilmModel, newItem: FilmModel): Boolean {
             return oldItem.id == newItem.id

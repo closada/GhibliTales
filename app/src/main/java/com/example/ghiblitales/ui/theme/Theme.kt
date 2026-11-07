@@ -17,7 +17,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 /**
- * Esquema de colores para el modo claro (Light Theme).
+ * (Light Theme).
  */
 private val LightColorScheme = lightColorScheme(
     primary = Green40,

@@ -12,6 +12,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel of the detail screen (Jetpack Compose).
+ *
+ * It uses StateFlow instead of LiveData because Compose observes StateFlow
+ * with collectAsState(). Same idea as MainViewModel: private state to write, public read-only state to observe.
+ */
 class DetailViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = FilmRepository(FilmDbHelper(application))
@@ -31,6 +37,7 @@ class DetailViewModel(application: Application) : AndroidViewModel(application) 
         _isFavorite.value = film.isFavorite
     }
 
+    // Saves or removes the film from favorites. The result updates isFavorite and Compose redraws the button.
     fun toggleFavorite() {
         val current = film ?: return
         viewModelScope.launch(Dispatchers.IO) {
@@ -43,6 +50,7 @@ class DetailViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    // Called after the error was shown, so the same Toast is not displayed again
     fun clearError() {
         _errorMessage.value = null
     }

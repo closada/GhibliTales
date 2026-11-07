@@ -12,8 +12,13 @@ import com.example.ghiblitales.ui.adapter.FilmAdapter
 import com.example.ghiblitales.ui.detail.DetailActivity
 import com.example.ghiblitales.ui.viewmodel.MainViewModel
 
+/**
+ * Favorites tab: lists the films saved in SQLite.
+ * It reuses FilmAdapter and the same shared MainViewModel as the list Fragment.
+ */
 class FilmFavoritesFragment : Fragment() {
 
+    // Same ViewBinding pattern as in FilmListFragment
     private var _binding: FragmentFilmFavoritesBinding? = null
     private val binding get() = _binding!!
 
@@ -34,7 +39,6 @@ class FilmFavoritesFragment : Fragment() {
 
         setupRecyclerView()
         observeViewModel()
-
     }
 
     private fun setupRecyclerView() {
@@ -42,6 +46,7 @@ class FilmFavoritesFragment : Fragment() {
             onItemClick = { item ->
                 startActivity(DetailActivity.newIntent(requireContext(), item))
             },
+            // Pressing the star here removes the film from favorites; the list refreshes itself
             onFavoriteClick = { item ->
                 viewModel.toggleFavorite(item)
             }
@@ -53,6 +58,7 @@ class FilmFavoritesFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.favoritesList.observe(viewLifecycleOwner) { favorites ->
             adapter.submitList(favorites)
+            // Empty state message when there are no favorites yet
             if (favorites.isNullOrEmpty()) {
                 binding.tvEmptyFavorites.visibility = View.VISIBLE
             } else {
@@ -61,6 +67,7 @@ class FilmFavoritesFragment : Fragment() {
         }
     }
 
+    // Reload on every return to this screen: favorites can change from the detail screen
     override fun onResume() {
         super.onResume()
         viewModel.loadFavoritesFromDb()

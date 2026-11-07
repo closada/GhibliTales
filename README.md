@@ -2,11 +2,9 @@
 
 Android app to explore the Studio Ghibli film catalog, search films, see their details and save favorites to read them offline.
 
-Built with **Kotlin** for the course *Desarrollo de Aplicaciones Android con Kotlin* (Second Exam, Topic 1: Catalog and Search of animated films).
-
 ## Demo video
 
-<!-- TODO: replace this line with the demo video (drag and drop the .mp4 here from github.com, or paste a YouTube/Drive link) -->
+[Watch the demo video on Google Drive](https://drive.google.com/file/d/1yJq7sYcDxpzlvuXUG4n5_MtwCuUv9a07/view?usp=sharing)
 
 ## Features
 

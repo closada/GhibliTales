@@ -1,4 +1,5 @@
 package com.example.ghiblitales.ui.detail
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +16,11 @@ import com.example.ghiblitales.data.FilmModel
 import com.example.ghiblitales.ui.theme.GhibliTalesTheme
 import com.example.ghiblitales.ui.viewmodel.DetailViewModel
 
+/**
+ * Detail screen. The Activity only receives the film, connects it to the ViewModel
+ * and sets the Compose UI (DetailScreen) as its content.
+ * It extends ComponentActivity (not AppCompatActivity) because it doesn't use XML views.
+ */
 class DetailActivity : ComponentActivity() {
 
     private val viewModel: DetailViewModel by viewModels()
@@ -22,7 +28,7 @@ class DetailActivity : ComponentActivity() {
     companion object {
         private const val EXTRA_FILM = "extra_film"
 
-        // Single place to build the Intent, so callers don't need to know the extra key
+        // Factory method: single place that builds the Intent, so callers don't need to know the extra key
         fun newIntent(context: Context, film: FilmModel): Intent {
             return Intent(context, DetailActivity::class.java).apply {
                 putExtra(EXTRA_FILM, film)
@@ -34,6 +40,7 @@ class DetailActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Read the film sent by the list (works because FilmModel is Serializable)
         val film = IntentCompat.getSerializableExtra(intent, EXTRA_FILM, FilmModel::class.java)
 
         // If the film did not arrive for some reason, warn the user and close the screen
@@ -45,6 +52,7 @@ class DetailActivity : ComponentActivity() {
 
         viewModel.loadFilm(film)
 
+        // From here on the UI is written with Jetpack Compose
         setContent {
             GhibliTalesTheme {
                 // collectAsState: subscribes to the StateFlow and recomposes when the value changes
@@ -59,6 +67,7 @@ class DetailActivity : ComponentActivity() {
                     }
                 }
 
+                // State hoisting: DetailScreen receives the state and reports events with lambdas
                 DetailScreen(
                     film = film,
                     isFavorite = isFavorite,
